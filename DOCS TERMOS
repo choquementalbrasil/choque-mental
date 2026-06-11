@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Termos de Serviço — Choque Mental Brasil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial, sans-serif; max-width: 860px; margin: 40px auto; line-height: 1.6; padding: 0 20px;">
+  <h1>Termos de Serviço — Choque Mental Brasil</h1>
+
+  <p>Última atualização: 11 de junho de 2026.</p>
+
+  <p>
+    Estes Termos de Serviço regulam o uso do aplicativo e das integrações técnicas
+    associadas ao projeto Choque Mental Brasil.
+  </p>
+
+  <h2>1. Objetivo do aplicativo</h2>
+  <p>
+    O aplicativo tem como finalidade auxiliar na criação, organização, publicação
+    e análise de conteúdo digital em contas profissionais autorizadas, usando APIs
+    oficiais e serviços integrados.
+  </p>
+
+  <h2>2. Uso autorizado</h2>
+  <p>
+    O aplicativo deve ser utilizado apenas por usuários autorizados e para contas
+    sobre as quais o usuário possua permissão legítima de administração,
+    publicação e análise.
+  </p>
+
+  <h2>3. Responsabilidade do usuário</h2>
+  <p>
+    O usuário é responsável por garantir que possui autorização para conectar,
+    publicar e analisar conteúdo nas contas vinculadas ao aplicativo.
+  </p>
+
+  <h2>4. Conteúdo publicado</h2>
+  <p>
+    O conteúdo publicado deve respeitar as políticas das plataformas utilizadas,
+    incluindo as políticas da Meta, Instagram, Facebook e demais serviços
+    integrados.
+  </p>
+
+  <h2>5. Limitações</h2>
+  <p>
+    O aplicativo não garante resultados específicos de alcance, engajamento,
+    crescimento de seguidores, monetização ou distribuição algorítmica.
+  </p>
+
+  <h2>6. Serviços de terceiros</h2>
+  <p>
+    O aplicativo pode depender de serviços externos, como APIs oficiais,
+    plataformas de banco de dados, automação, geração de mídia e hospedagem.
+    A disponibilidade desses serviços está sujeita às políticas e limitações
+    de cada provedor.
+  </p>
+
+  <h2>7. Segurança</h2>
+  <p>
+    O usuário deve manter tokens, senhas, chaves de API e credenciais em sigilo.
+    O vazamento de credenciais pode comprometer a segurança da conta e exigir
+    revogação imediata dos acessos.
+  </p>
+
+  <h2>8. Suspensão de uso</h2>
+  <p>
+    O acesso ao aplicativo pode ser interrompido ou suspenso em caso de uso
+    indevido, violação de políticas ou riscos de segurança.
+  </p>
+
+  <h2>9. Alterações nos termos</h2>
+  <p>
+    Estes termos podem ser atualizados periodicamente. A versão mais recente
+    estará sempre disponível nesta página.
+  </p>
+
+  <h2>10. Contato</h2>
+  <p>
+    Para dúvidas sobre estes termos, entre em contato:
+  </p>
+  <p>
+    E-mail: seuemail@exemplo.com
+  </p>
+</body>
+</html>
