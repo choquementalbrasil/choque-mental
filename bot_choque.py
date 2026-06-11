@@ -543,14 +543,34 @@ def slugify(s: str) -> str:
 
 
 def baixar_imagem(prompt: str, dest: Path) -> None:
-    # Pollinations endpoint público. Sem texto na imagem; texto entra no FFmpeg.
+    # Pollinations com retry automático
     prompt_full = f"{prompt}, vertical 9:16, no text, no watermark"
     encoded = urllib.parse.quote(prompt_full)
     url = f"https://image.pollinations.ai/prompt/{encoded}?width=1080&height=1920&nologo=true&enhance=true"
-    r = requests.get(url, timeout=180)
-    if not r.ok or not r.content:
-        raise RuntimeError(f"Pollinations erro {r.status_code}: {r.text[:200]}")
-    dest.write_bytes(r.content)
+
+    ultimo_erro = None
+
+    for tentativa in range(5):
+        try:
+            r = requests.get(url, timeout=180)
+
+            if r.status_code == 402:
+                print(f"Pollinations fila cheia. Tentativa {tentativa+1}/5")
+                time.sleep(30)
+                continue
+
+            if r.ok and r.content:
+                dest.write_bytes(r.content)
+                return
+
+            ultimo_erro = f"{r.status_code}: {r.text[:200]}"
+
+        except Exception as e:
+            ultimo_erro = str(e)
+
+        time.sleep(10)
+
+    raise RuntimeError(f"Pollinations falhou após 5 tentativas: {ultimo_erro}")
 
 
 def escrever_textfile(text: str, path: Path) -> None:
@@ -791,8 +811,12 @@ def main() -> None:
         image_path = OUT / f"{slug}.jpg"
         video_path = OUT / f"{slug}.mp4"
 
-        baixar_imagem(conteudo["image_prompt"], image_path)
-        log_exec("pollinations", "ok", str(image_path.name), post_id)
+        try:
+            baixar_imagem(conteudo["image_prompt"], image_path)
+            log_exec("pollinations", "ok", str(image_path.name), post_id)
+        except Exception as e:
+            print(f"ERRO POLLINATIONS: {e}")
+            continue
 
         montar_video(image_path, conteudo["hook"], conteudo["midia_texto"], video_path)
         log_exec("ffmpeg", "ok", str(video_path.name), post_id)
