@@ -570,7 +570,16 @@ def baixar_imagem(prompt: str, dest: Path) -> None:
 
         time.sleep(10)
 
-    raise RuntimeError(f"Pollinations falhou após 5 tentativas: {ultimo_erro}")
+
+    print(f"[AVISO] Pollinations indisponível: {ultimo_erro}")
+    try:
+        from PIL import Image
+        Image.new("RGB", (1080, 1920), color=(20,20,20)).save(dest)
+        print("[AVISO] Placeholder criado. Continuando execução.")
+        return
+    except Exception:
+        raise RuntimeError(f"Pollinations falhou após 5 tentativas: {ultimo_erro}")
+
 
 
 def escrever_textfile(text: str, path: Path) -> None:
