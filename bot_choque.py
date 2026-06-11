@@ -463,10 +463,13 @@ Modo de reciclagem: {modo_reciclagem(post)}
 Gere a saída exatamente no formato obrigatório.
 """.strip()
 
-    endpoint = (
+   ponto_final = (
         f"https://api.cloudflare.com/client/v4/accounts/{CFG.cf_account_id}"
         f"/ai/run/{CFG.cf_model}"
     )
+    print("CF_ACCOUNT_ID =", CFG.cf_account_id)
+print("CF_MODEL =", CFG.cf_model)
+print("ENDPOINT =", ponto_final)
     payload = {
         "messages": [
             {"role": "system", "content": system},
@@ -479,7 +482,7 @@ Gere a saída exatamente no formato obrigatório.
         "Authorization": f"Bearer {CFG.cf_api_token}",
         "Content-Type": "application/json",
     }
-    r = requests.post(endpoint, headers=headers, json=payload, timeout=120)
+   r = requests.post(ponto_final, headers=headers, json=payload, timeout=120)
     if not r.ok:
         raise RuntimeError(f"Cloudflare AI erro {r.status_code}: {r.text[:1000]}")
     data = r.json()
