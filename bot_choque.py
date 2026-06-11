@@ -462,14 +462,11 @@ Modo de reciclagem: {modo_reciclagem(post)}
 
 Gere a saída exatamente no formato obrigatório.
 """.strip()
+    ponto_final = f"https://api.cloudflare.com/client/v4/accounts/{CFG.cf_account_id}/ai/run/{CFG.cf_model}"
 
-   ponto_final = (
-        f"https://api.cloudflare.com/client/v4/accounts/{CFG.cf_account_id}"
-        f"/ai/run/{CFG.cf_model}"
-    )
     print("CF_ACCOUNT_ID =", CFG.cf_account_id)
-print("CF_MODEL =", CFG.cf_model)
-print("ENDPOINT =", ponto_final)
+    print("CF_MODEL =", CFG.cf_model)
+    print("ENDPOINT =", ponto_final)
     payload = {
         "messages": [
             {"role": "system", "content": system},
