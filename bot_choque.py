@@ -578,7 +578,8 @@ def baixar_imagem(prompt: str, dest: Path) -> None:
         print("[AVISO] Placeholder criado. Continuando execução.")
         return
     except Exception:
-        raise RuntimeError(f"Pollinations falhou após 5 tentativas: {ultimo_erro}")
+        print(f"[AVISO] Não foi possível criar placeholder: {ultimo_erro}")
+        return
 
 
 
