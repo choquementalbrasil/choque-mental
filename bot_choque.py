@@ -462,11 +462,12 @@ Modo de reciclagem: {modo_reciclagem(post)}
 
 Gere a saída exatamente no formato obrigatório.
 """.strip()
-    endpoint = f"https://api.cloudflare.com/client/v4/accounts/{CFG.cf_account_id}/ai/run/{CFG.cf_model}"
+
+    ponto_final = f"https://api.cloudflare.com/client/v4/accounts/{CFG.cf_account_id}/ai/run/{CFG.cf_model}"
 
     print("CF_ACCOUNT_ID =", CFG.cf_account_id)
     print("CF_MODEL =", CFG.cf_model)
-    print("ENDPOINT =", endpoint)
+    print("ENDPOINT =", ponto_final)
 
     headers = {
         "Authorization": f"Bearer {CFG.cf_api_token}",
@@ -483,16 +484,14 @@ Gere a saída exatamente no formato obrigatório.
     }
 
     r = requests.post(
-        endpoint,
+        ponto_final,
         headers=headers,
         json=payload,
-        timeout=120,
+        timeout=120
     )
 
     if not r.ok:
-        raise RuntimeError(
-            f"Cloudflare AI erro {r.status_code}: {r.text[:1000]}"
-        )
+        raise RuntimeError(f"Cloudflare AI erro {r.status_code}: {r.text[:1000]}")
 
     data = r.json()
 
@@ -503,14 +502,10 @@ Gere a saída exatamente no formato obrigatório.
     )
 
     if not text:
-        raise RuntimeError(
-            f"Resposta vazia Cloudflare: {json.dumps(data)[:1000]}"
-        )
+        raise RuntimeError(f"Resposta vazia Cloudflare: {str(data)[:1000]}")
 
     parsed = parse_blocos(text)
-
     validar_conteudo(parsed)
-
     return parsed
 
 def parse_blocos(text: str) -> Dict[str, str]:
