@@ -462,11 +462,11 @@ Modo de reciclagem: {modo_reciclagem(post)}
 
 Gere a saída exatamente no formato obrigatório.
 """.strip()
-  ponto_final = f"https://api.cloudflare.com/client/v4/accounts/{CFG.cf_account_id}/ai/run/{CFG.cf_model}"
+    endpoint = f"https://api.cloudflare.com/client/v4/accounts/{CFG.cf_account_id}/ai/run/{CFG.cf_model}"
 
     print("CF_ACCOUNT_ID =", CFG.cf_account_id)
     print("CF_MODEL =", CFG.cf_model)
-    print("ENDPOINT =", ponto_final)
+    print("ENDPOINT =", endpoint)
 
     headers = {
         "Authorization": f"Bearer {CFG.cf_api_token}",
@@ -475,18 +475,18 @@ Gere a saída exatamente no formato obrigatório.
 
     payload = {
         "messages": [
-            {"role": "system", "content": sistema},
-            {"role": "user", "content": usuario},
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
         ],
         "temperature": 0.75,
         "max_tokens": 1200,
     }
 
     r = requests.post(
-        ponto_final,
+        endpoint,
         headers=headers,
         json=payload,
-        timeout=120
+        timeout=120,
     )
 
     if not r.ok:
