@@ -462,29 +462,56 @@ Modo de reciclagem: {modo_reciclagem(post)}
 
 Gere a saída exatamente no formato obrigatório.
 """.strip()
-
-    ponto_final = f"https://api.cloudflare.com/client/v4/accounts/{CFG.cf_account_id}/ai/run/{CFG.cf_model}"
+  ponto_final = f"https://api.cloudflare.com/client/v4/accounts/{CFG.cf_account_id}/ai/run/{CFG.cf_model}"
 
     print("CF_ACCOUNT_ID =", CFG.cf_account_id)
     print("CF_MODEL =", CFG.cf_model)
     print("ENDPOINT =", ponto_final)
 
-    payload = {
+    headers = {
         "Authorization": f"Bearer {CFG.cf_api_token}",
         "Content-Type": "application/json",
     }
-   r = requests.post(ponto_final, headers=headers, json=payload, timeout=120)
+
+    payload = {
+        "messages": [
+            {"role": "system", "content": sistema},
+            {"role": "user", "content": usuario},
+        ],
+        "temperature": 0.75,
+        "max_tokens": 1200,
+    }
+
+    r = requests.post(
+        ponto_final,
+        headers=headers,
+        json=payload,
+        timeout=120
+    )
+
     if not r.ok:
-        raise RuntimeError(f"Cloudflare AI erro {r.status_code}: {r.text[:1000]}")
+        raise RuntimeError(
+            f"Cloudflare AI erro {r.status_code}: {r.text[:1000]}"
+        )
+
     data = r.json()
-    text = data.get("result", {}).get("response") or data.get("result", {}).get("text") or ""
+
+    text = (
+        data.get("result", {}).get("response")
+        or data.get("result", {}).get("text")
+        or ""
+    )
+
     if not text:
-        raise RuntimeError(f"Resposta vazia Cloudflare: {json.dumps(data)[:1000]}")
+        raise RuntimeError(
+            f"Resposta vazia Cloudflare: {json.dumps(data)[:1000]}"
+        )
 
     parsed = parse_blocos(text)
-    validar_conteudo(parsed)
-    return parsed
 
+    validar_conteudo(parsed)
+
+    return parsed
 
 def parse_blocos(text: str) -> Dict[str, str]:
     labels = ["HOOK", "MIDIA_TEXTO", "LEGENDA", "IMAGE_PROMPT", "CTA_BIO"]
@@ -500,7 +527,6 @@ def parse_blocos(text: str) -> Dict[str, str]:
             chunk = chunk.split(end, 1)[0]
         out[label.lower()] = chunk.strip()
     return out
-
 
 def validar_conteudo(c: Dict[str, str]) -> None:
     required = ["hook", "midia_texto", "legenda", "image_prompt", "cta_bio"]
