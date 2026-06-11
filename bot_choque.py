@@ -463,17 +463,10 @@ Modo de reciclagem: {modo_reciclagem(post)}
 Gere a saída exatamente no formato obrigatório.
 """.strip()
 
-    ponto_final = f"https://api.cloudflare.com/client/v4/accounts/{CFG.cf_account_id}/ai/run/{CFG.cf_model}"
-
-    print("CF_ACCOUNT_ID =", CFG.cf_account_id)
-    print("CF_MODEL =", CFG.cf_model)
-    print("ENDPOINT =", ponto_final)
-
-    headers = {
-        "Authorization": f"Bearer {CFG.cf_api_token}",
-        "Content-Type": "application/json",
-    }
-
+    endpoint = (
+        f"https://api.cloudflare.com/client/v4/accounts/{CFG.cf_account_id}"
+        f"/ai/run/{CFG.cf_model}"
+    )
     payload = {
         "messages": [
             {"role": "system", "content": system},
@@ -482,31 +475,22 @@ Gere a saída exatamente no formato obrigatório.
         "temperature": 0.75,
         "max_tokens": 1200,
     }
-
-    r = requests.post(
-        ponto_final,
-        headers=headers,
-        json=payload,
-        timeout=120
-    )
-
+    headers = {
+        "Authorization": f"Bearer {CFG.cf_api_token}",
+        "Content-Type": "application/json",
+    }
+    r = requests.post(endpoint, headers=headers, json=payload, timeout=120)
     if not r.ok:
         raise RuntimeError(f"Cloudflare AI erro {r.status_code}: {r.text[:1000]}")
-
     data = r.json()
-
-    text = (
-        data.get("result", {}).get("response")
-        or data.get("result", {}).get("text")
-        or ""
-    )
-
+    text = data.get("result", {}).get("response") or data.get("result", {}).get("text") or ""
     if not text:
-        raise RuntimeError(f"Resposta vazia Cloudflare: {str(data)[:1000]}")
+        raise RuntimeError(f"Resposta vazia Cloudflare: {json.dumps(data)[:1000]}")
 
     parsed = parse_blocos(text)
     validar_conteudo(parsed)
     return parsed
+
 
 def parse_blocos(text: str) -> Dict[str, str]:
     labels = ["HOOK", "MIDIA_TEXTO", "LEGENDA", "IMAGE_PROMPT", "CTA_BIO"]
@@ -522,6 +506,7 @@ def parse_blocos(text: str) -> Dict[str, str]:
             chunk = chunk.split(end, 1)[0]
         out[label.lower()] = chunk.strip()
     return out
+
 
 def validar_conteudo(c: Dict[str, str]) -> None:
     required = ["hook", "midia_texto", "legenda", "image_prompt", "cta_bio"]
@@ -542,45 +527,37 @@ def slugify(s: str) -> str:
     return s[:80] or "choque"
 
 
-def baixar_imagem(prompt: str, dest: Path) -> None:
-    # Pollinations com retry automático
+def baixar_imagem(prompt: str, dest: Path) -> bool:
+    # Pollinations com retry e fallback
     prompt_full = f"{prompt}, vertical 9:16, no text, no watermark"
     encoded = urllib.parse.quote(prompt_full)
     url = f"https://image.pollinations.ai/prompt/{encoded}?width=1080&height=1920&nologo=true&enhance=true"
-
-    ultimo_erro = None
 
     for tentativa in range(5):
         try:
             r = requests.get(url, timeout=180)
 
+            if r.ok and r.content:
+                dest.write_bytes(r.content)
+                return True
+
             if r.status_code == 402:
-                print(f"Pollinations fila cheia. Tentativa {tentativa+1}/5")
+                print(f"[AVISO] Pollinations ocupado ({tentativa+1}/5)")
                 time.sleep(30)
                 continue
 
-            if r.ok and r.content:
-                dest.write_bytes(r.content)
-                return
-
-            ultimo_erro = f"{r.status_code}: {r.text[:200]}"
-
         except Exception as e:
-            ultimo_erro = str(e)
+            print(f"[AVISO] Erro Pollinations: {e}")
 
         time.sleep(10)
 
-
-    print(f"[AVISO] Pollinations indisponível: {ultimo_erro}")
     try:
         from PIL import Image
-        Image.new("RGB", (1080, 1920), color=(20,20,20)).save(dest)
-        print("[AVISO] Placeholder criado. Continuando execução.")
-        return
+        Image.new("RGB", (1080, 1920), color=(20, 20, 20)).save(dest)
+        print("[AVISO] Placeholder criado.")
+        return False
     except Exception:
-        print(f"[AVISO] Não foi possível criar placeholder: {ultimo_erro}")
-        return
-
+        return False
 
 
 def escrever_textfile(text: str, path: Path) -> None:
@@ -821,12 +798,8 @@ def main() -> None:
         image_path = OUT / f"{slug}.jpg"
         video_path = OUT / f"{slug}.mp4"
 
-        try:
-            baixar_imagem(conteudo["image_prompt"], image_path)
-            log_exec("pollinations", "ok", str(image_path.name), post_id)
-        except Exception as e:
-            print(f"ERRO POLLINATIONS: {e}")
-            continue
+        baixar_imagem(conteudo["image_prompt"], image_path)
+        log_exec("pollinations", "ok", str(image_path.name), post_id)
 
         montar_video(image_path, conteudo["hook"], conteudo["midia_texto"], video_path)
         log_exec("ffmpeg", "ok", str(video_path.name), post_id)
