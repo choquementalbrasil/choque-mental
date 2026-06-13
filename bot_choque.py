@@ -5,7 +5,7 @@ CHOQUE MENTAL 3.0
 Sistema cloud: GitHub Actions + Supabase + OpenAlex + Cloudflare Workers AI + Pollinations + FFmpeg + Instagram Graph API.
 
 Modo seguro:
-- DRY_RUN=true: gera conteúdo/vídeo e atualiza banco sem publicar no Instagram.
+- DRY_RUN=false: gera conteúdo/vídeo e atualiza banco sem publicar no Instagram.
 - DRY_RUN=false: publica no Instagram Reels usando URL pública do vídeo no Supabase Storage.
 
 Sem link de afiliado em comentários. CTA aponta para a bio.
