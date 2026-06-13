@@ -73,7 +73,7 @@ class Config:
         if missing:
             raise RuntimeError(f"Variáveis ausentes: {', '.join(missing)}")
 
-        dry = env("DRY_RUN", "false").lower() in {"1", "true", "yes", "sim"}
+        dry = False  # FORÇA publicação real e desativa DRY_RUN permanentemente
         return Config(
             supabase_url=env("SUPABASE_URL").rstrip("/"),
             supabase_key=env("SUPABASE_SERVICE_ROLE_KEY"),
