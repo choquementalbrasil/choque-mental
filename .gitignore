@@ -1,6 +1,0 @@
-.env
-output/
-*.mp4
-*.jpg
-*.png
-__pycache__/
