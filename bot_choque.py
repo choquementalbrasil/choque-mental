@@ -1,3 +1,5 @@
+HOOKS_VIRAIS=['VOCÊ ESTÁ SENDO ENGANADO','SEU CÉREBRO FAZ ISSO','O QUE NINGUÉM TE CONTOU']
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -591,10 +593,10 @@ def montar_video(image_path: Path, hook: str, midia_texto: str, output_path: Pat
         "noise=alls=24:allf=t+u,"
         "drawbox=x=0:y=0:w=iw:h=ih:color=black@0.18:t=fill,"
         f"drawtext=fontfile='{font}':textfile='{hook_file}':"
-        "fontcolor=yellow:fontsize=70:line_spacing=12:box=1:boxcolor=black@0.62:boxborderw=28:"
+        "fontcolor=white:fontsize=100:line_spacing=12:box=1:boxcolor=black@0.62:boxborderw=28:"
         "x=(w-text_w)/2:y=(h-text_h)/2-170,"
         f"drawtext=fontfile='{font}':textfile='{body_file}':"
-        "fontcolor=white:fontsize=44:line_spacing=10:box=1:boxcolor=black@0.55:boxborderw=22:"
+        "fontcolor=white:fontsize=58:line_spacing=10:box=1:boxcolor=black@0.55:boxborderw=22:"
         "x=(w-text_w)/2:y=(h-text_h)/2+170,"
         "format=yuv420p"
     )
@@ -604,7 +606,7 @@ def montar_video(image_path: Path, hook: str, midia_texto: str, output_path: Pat
         "-loop", "1",
         "-i", str(image_path),
         "-vf", vf,
-        "-t", "10",
+        "-t", "15",
         "-r", "30",
         "-c:v", "libx264",
         "-preset", "veryfast",

@@ -49,5 +49,6 @@ jobs:
           RSS_MAX_ITEMS_PER_RUN: ${{ secrets.RSS_MAX_ITEMS_PER_RUN }}
           GOOGLE_SHEETS_CSV_URL: ${{ secrets.GOOGLE_SHEETS_CSV_URL }}
           MAX_POSTS_PER_DAY: ${{ secrets.MAX_POSTS_PER_DAY }}
-          DRY_RUN: false
+          DRY_RUN: ${{ secrets.DRY_RUN }}
         run: python bot_choque.py
+
